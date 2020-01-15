@@ -25,10 +25,10 @@ class AlienInvasion:
                     sys.exit()
 
             # Redraw the screen during each pass through the loop
-            # self.screen.fill(self.bg_color)
+            self.screen.fill(self.bg_color)
             #Make the most recently draw screen visable
             pygame.display.flip()
 if __name__ == '__main__':
-     #Make game instance and run the game
+    #Make game instance and run the game
     ai = AlienInvasion()
     ai.run_game()
