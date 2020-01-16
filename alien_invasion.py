@@ -2,6 +2,7 @@ import sys
 from settings import Settings
 import pygame
 from ship import Ship
+from bullet import Bullet
 
 class AlienInvasion:
     '''Overall class to manage game assets and behavior'''
@@ -14,7 +15,7 @@ class AlienInvasion:
         self.screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
-
+        self.bullets = pygame.sprite.Group()
         #Set background color
         self.bg_color = (230, 230, 230)
 
@@ -28,6 +29,7 @@ class AlienInvasion:
             self.ship.update()
             #Check for keyboard interactions or mouse interactions
             self._check_events()
+            self.update_bullets()
             #redraw the screen
             self._update_screen()
 
@@ -51,6 +53,8 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             # Move ship to left
             self.ship.moving_left = True
+        elif event.key == pygame.K_SPACE:
+            self.fire_bullet()
         elif event.key == pygame.K_q:
             #If you click 'q' the game exits
             sys.exit()
@@ -67,7 +71,20 @@ class AlienInvasion:
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
         # Make the most recently draw screen visable
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
         pygame.display.flip()
+    def fire_bullet(self):
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+    def update_bullets(self):
+        # Update the bullets position
+        self.bullets.update()
+        # Get rid of bullets that have disapperred off the screen
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
 if __name__ == '__main__':
     #Make game instance and run the game
